@@ -285,6 +285,252 @@ type InMemoryData = {
   searchRows: SearchIndexRow[];
 };
 
+const OPENAPI_BASE_SPEC = {
+  openapi: '3.0.3',
+  info: {
+    title: 'Quran API',
+    version: '1.0.0',
+    description: 'Public API for Surah, Ayah, search, audio, and fonts.',
+  },
+  tags: [
+    { name: 'Health' },
+    { name: 'Surah' },
+    { name: 'Ayah' },
+    { name: 'Search' },
+    { name: 'Audio' },
+    { name: 'Font' },
+  ],
+  paths: {
+    '/health': {
+      get: {
+        tags: ['Health'],
+        summary: 'Health check',
+        responses: {
+          '200': { description: 'Service is healthy' },
+        },
+      },
+    },
+    '/healthz': {
+      get: {
+        tags: ['Health'],
+        summary: 'Health check alias',
+        responses: {
+          '200': { description: 'Service is healthy' },
+        },
+      },
+    },
+    '/surahs': {
+      get: {
+        tags: ['Surah'],
+        summary: 'Get all surahs',
+        responses: {
+          '200': { description: 'List of surahs' },
+        },
+      },
+    },
+    '/surahs/{id}': {
+      get: {
+        tags: ['Surah'],
+        summary: 'Get surah by id',
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            required: true,
+            schema: { type: 'integer', minimum: 1, maximum: 114 },
+          },
+        ],
+        responses: {
+          '200': { description: 'Surah details' },
+          '404': { description: 'Surah not found' },
+        },
+      },
+    },
+    '/surahs/{surahId}/ayahs': {
+      get: {
+        tags: ['Ayah'],
+        summary: 'Get paginated ayahs for a surah',
+        parameters: [
+          {
+            name: 'surahId',
+            in: 'path',
+            required: true,
+            schema: { type: 'integer', minimum: 1, maximum: 114 },
+          },
+          {
+            name: 'page',
+            in: 'query',
+            required: false,
+            schema: { type: 'integer', minimum: 1, default: 1 },
+          },
+          {
+            name: 'limit',
+            in: 'query',
+            required: false,
+            schema: { type: 'integer', minimum: 1, maximum: 286, default: 20 },
+          },
+        ],
+        responses: {
+          '200': { description: 'Paginated ayah list' },
+        },
+      },
+    },
+    '/surahs/{surahId}/ayahs/{ayahNumber}': {
+      get: {
+        tags: ['Ayah'],
+        summary: 'Get a single ayah by surah and ayah number',
+        parameters: [
+          {
+            name: 'surahId',
+            in: 'path',
+            required: true,
+            schema: { type: 'integer', minimum: 1, maximum: 114 },
+          },
+          {
+            name: 'ayahNumber',
+            in: 'path',
+            required: true,
+            schema: { type: 'integer', minimum: 1 },
+          },
+        ],
+        responses: {
+          '200': { description: 'Ayah details' },
+          '404': { description: 'Ayah not found' },
+        },
+      },
+    },
+    '/search': {
+      get: {
+        tags: ['Search'],
+        summary: 'Search ayahs by Arabic or translation text',
+        parameters: [
+          {
+            name: 'q',
+            in: 'query',
+            required: true,
+            schema: { type: 'string', minLength: 2 },
+          },
+          {
+            name: 'lang',
+            in: 'query',
+            required: false,
+            schema: { type: 'string', enum: ['en', 'ar'], default: 'en' },
+          },
+          {
+            name: 'page',
+            in: 'query',
+            required: false,
+            schema: { type: 'integer', minimum: 1, default: 1 },
+          },
+          {
+            name: 'limit',
+            in: 'query',
+            required: false,
+            schema: { type: 'integer', minimum: 1, maximum: 50, default: 20 },
+          },
+        ],
+        responses: {
+          '200': { description: 'Search results' },
+        },
+      },
+    },
+    '/audio/reciters': {
+      get: {
+        tags: ['Audio'],
+        summary: 'Get available reciters',
+        responses: {
+          '200': { description: 'Reciter list' },
+        },
+      },
+    },
+    '/audio/surah/{surahId}/ayah/{ayahNumber}': {
+      get: {
+        tags: ['Audio'],
+        summary: 'Get direct audio URL for an ayah',
+        parameters: [
+          {
+            name: 'surahId',
+            in: 'path',
+            required: true,
+            schema: { type: 'integer', minimum: 1, maximum: 114 },
+          },
+          {
+            name: 'ayahNumber',
+            in: 'path',
+            required: true,
+            schema: { type: 'integer', minimum: 1 },
+          },
+          {
+            name: 'reciter',
+            in: 'query',
+            required: false,
+            schema: { type: 'string', default: 'mishary' },
+          },
+        ],
+        responses: {
+          '200': { description: 'Audio URL payload' },
+        },
+      },
+    },
+    '/audio/proxy/surah/{surahId}/ayah/{ayahNumber}': {
+      get: {
+        tags: ['Audio'],
+        summary: 'Stream proxied audio for an ayah',
+        parameters: [
+          {
+            name: 'surahId',
+            in: 'path',
+            required: true,
+            schema: { type: 'integer', minimum: 1, maximum: 114 },
+          },
+          {
+            name: 'ayahNumber',
+            in: 'path',
+            required: true,
+            schema: { type: 'integer', minimum: 1 },
+          },
+          {
+            name: 'reciter',
+            in: 'query',
+            required: false,
+            schema: { type: 'string', default: 'mishary' },
+          },
+        ],
+        responses: {
+          '200': { description: 'Audio stream' },
+        },
+      },
+    },
+    '/fonts': {
+      get: {
+        tags: ['Font'],
+        summary: 'Get available Quran fonts and defaults',
+        responses: {
+          '200': { description: 'Font list and defaults' },
+        },
+      },
+    },
+    '/fonts/{id}': {
+      get: {
+        tags: ['Font'],
+        summary: 'Get font details by id',
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            required: true,
+            schema: { type: 'string' },
+          },
+        ],
+        responses: {
+          '200': { description: 'Font details' },
+          '404': { description: 'Font not found' },
+        },
+      },
+    },
+  },
+} as const;
+
 class HttpError extends Error {
   constructor(
     public readonly statusCode: number,
@@ -983,6 +1229,59 @@ app.get('/health', async (c) => {
     uptime: process.uptime(),
     timestamp: getTimestamp(),
   });
+});
+
+app.get('/healthz', async (c) => {
+  const dbStatus: 'connected' | 'error' = db.enabled ? 'connected' : 'error';
+
+  return jsonSuccess(c, {
+    status: 'ok',
+    db: dbStatus,
+    uptime: process.uptime(),
+    timestamp: getTimestamp(),
+  });
+});
+
+app.get('/docs/openapi.json', (c) => {
+  const openApiSpec = {
+    ...OPENAPI_BASE_SPEC,
+    servers: [{ url: c.req.url.split(c.req.path)[0] }],
+  };
+
+  return c.json(openApiSpec);
+});
+
+app.get('/docs', (c) => {
+  const title = 'Quran API Docs';
+
+  return c.html(`<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>${title}</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css"
+    />
+    <style>
+      body { margin: 0; background: #fafafa; }
+      #swagger-ui { max-width: 1100px; margin: 0 auto; }
+    </style>
+  </head>
+  <body>
+    <div id="swagger-ui"></div>
+    <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+    <script>
+      window.ui = SwaggerUIBundle({
+        url: '/docs/openapi.json',
+        dom_id: '#swagger-ui',
+        deepLinking: true,
+        presets: [SwaggerUIBundle.presets.apis],
+      });
+    </script>
+  </body>
+</html>`);
 });
 
 app.get('/surahs', async (c) => {
