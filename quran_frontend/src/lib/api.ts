@@ -35,8 +35,9 @@ type BackendPaginatedAyahs = {
   totalPages: number;
 };
 
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://quran-web-app-1.onrender.com';
+const API_BASE = (
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://max-assignment.onrender.com'
+).replace(/\/+$/, '');
 
 const CUMULATIVE_AYAH_COUNTS = [
   0, 7, 293, 493, 669, 789, 954, 1160, 1235, 1364, 1473, 1596, 1707, 1750,
