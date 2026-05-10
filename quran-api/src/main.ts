@@ -16,7 +16,8 @@ const RECITERS = [
   {
     id: 'sudais',
     name: 'Abdurrahman Al-Sudais',
-    baseUrl: 'https://cdn.islamic.network/quran/audio/128/ar.abdurrahmaansudais',
+    baseUrl:
+      'https://cdn.islamic.network/quran/audio/128/ar.abdurrahmaansudais',
   },
   {
     id: 'husary',
@@ -26,25 +27,24 @@ const RECITERS = [
 ] as const;
 
 const AYAH_COUNTS = [
-  7, 286, 200, 176, 120, 165, 206, 75, 129, 109, 123, 111, 43, 52, 99, 128,
-  111, 110, 98, 135, 112, 78, 118, 64, 77, 227, 93, 88, 69, 60, 34, 30, 73,
-  54, 45, 83, 182, 88, 75, 85, 54, 53, 89, 59, 37, 35, 38, 29, 18, 45, 60, 49,
-  62, 55, 78, 96, 29, 22, 24, 13, 14, 11, 11, 18, 12, 12, 30, 52, 52, 44, 28,
-  28, 20, 56, 40, 31, 50, 40, 46, 42, 29, 19, 36, 25, 22, 17, 19, 26, 30, 20,
-  15, 21, 11, 8, 8, 19, 5, 8, 8, 11, 11, 8, 3, 9, 5, 4, 7, 3, 6, 3, 5, 4, 5,
-  6,
+  7, 286, 200, 176, 120, 165, 206, 75, 129, 109, 123, 111, 43, 52, 99, 128, 111,
+  110, 98, 135, 112, 78, 118, 64, 77, 227, 93, 88, 69, 60, 34, 30, 73, 54, 45,
+  83, 182, 88, 75, 85, 54, 53, 89, 59, 37, 35, 38, 29, 18, 45, 60, 49, 62, 55,
+  78, 96, 29, 22, 24, 13, 14, 11, 11, 18, 12, 12, 30, 52, 52, 44, 28, 28, 20,
+  56, 40, 31, 50, 40, 46, 42, 29, 19, 36, 25, 22, 17, 19, 26, 30, 20, 15, 21,
+  11, 8, 8, 19, 5, 8, 8, 11, 11, 8, 3, 9, 5, 4, 7, 3, 6, 3, 5, 4, 5, 6,
 ] as const;
 
 const CUMULATIVE_AYAH_COUNTS = [
-  0, 7, 293, 493, 669, 789, 954, 1160, 1235, 1364, 1473, 1596, 1707, 1750,
-  1802, 1901, 2029, 2140, 2250, 2348, 2483, 2595, 2673, 2791, 2855, 2932, 3159,
-  3252, 3340, 3409, 3469, 3503, 3533, 3606, 3660, 3705, 3788, 3970, 4058, 4133,
-  4218, 4272, 4325, 4414, 4473, 4510, 4545, 4583, 4612, 4630, 4675, 4735, 4784,
-  4846, 4901, 4979, 5075, 5104, 5126, 5150, 5163, 5177, 5188, 5199, 5217, 5229,
-  5241, 5271, 5323, 5375, 5419, 5447, 5475, 5495, 5551, 5591, 5622, 5672, 5712,
-  5758, 5800, 5829, 5848, 5884, 5909, 5931, 5948, 5967, 5993, 6023, 6043, 6058,
-  6079, 6090, 6098, 6106, 6125, 6130, 6138, 6146, 6157, 6168, 6176, 6179, 6188,
-  6193, 6197, 6204, 6207, 6213, 6216, 6221, 6225, 6230,
+  0, 7, 293, 493, 669, 789, 954, 1160, 1235, 1364, 1473, 1596, 1707, 1750, 1802,
+  1901, 2029, 2140, 2250, 2348, 2483, 2595, 2673, 2791, 2855, 2932, 3159, 3252,
+  3340, 3409, 3469, 3503, 3533, 3606, 3660, 3705, 3788, 3970, 4058, 4133, 4218,
+  4272, 4325, 4414, 4473, 4510, 4545, 4583, 4612, 4630, 4675, 4735, 4784, 4846,
+  4901, 4979, 5075, 5104, 5126, 5150, 5163, 5177, 5188, 5199, 5217, 5229, 5241,
+  5271, 5323, 5375, 5419, 5447, 5475, 5495, 5551, 5591, 5622, 5672, 5712, 5758,
+  5800, 5829, 5848, 5884, 5909, 5931, 5948, 5967, 5993, 6023, 6043, 6058, 6079,
+  6090, 6098, 6106, 6125, 6130, 6138, 6146, 6157, 6168, 6176, 6179, 6188, 6193,
+  6197, 6204, 6207, 6213, 6216, 6221, 6225, 6230,
 ] as const;
 
 const AVAILABLE_FONTS = [
@@ -658,11 +658,15 @@ class Database {
 
   private async ensureAyahIdColumn(): Promise<void> {
     try {
-      const columns = await this.execute<{ name: string }>('PRAGMA table_info(ayahs)');
+      const columns = await this.execute<{ name: string }>(
+        'PRAGMA table_info(ayahs)',
+      );
       const hasAyahId = columns.some((column) => column.name === 'ayah_id');
 
       if (!hasAyahId) {
-        await this.client.execute('ALTER TABLE ayahs ADD COLUMN ayah_id INTEGER;');
+        await this.client.execute(
+          'ALTER TABLE ayahs ADD COLUMN ayah_id INTEGER;',
+        );
       }
     } catch {
       console.debug('Column check skipped.');
@@ -671,7 +675,9 @@ class Database {
 
   private async seedIfEmpty(): Promise<void> {
     try {
-      const row = await this.executeOne<{ count: number }>('SELECT COUNT(*) AS count FROM surahs');
+      const row = await this.executeOne<{ count: number }>(
+        'SELECT COUNT(*) AS count FROM surahs',
+      );
 
       if (row && Number(row.count) > 0) {
         return;
@@ -690,14 +696,18 @@ class Database {
     }
   }
 
-  private async fetchSurahs(metadataItems: SurahMetadata[]): Promise<SeedSurah[]> {
+  private async fetchSurahs(
+    metadataItems: SurahMetadata[],
+  ): Promise<SeedSurah[]> {
     const surahs: SeedSurah[] = [];
 
     for (let surahNumber = 1; surahNumber <= SURAH_COUNT; surahNumber += 1) {
       console.log(`Seeding surah ${surahNumber}/${SURAH_COUNT}...`);
 
       const [surahFile, translationFile] = await Promise.all([
-        this.fetchJson<SurahFile>(`${SOURCE_BASE_URL}/surah/surah_${surahNumber}.json`),
+        this.fetchJson<SurahFile>(
+          `${SOURCE_BASE_URL}/surah/surah_${surahNumber}.json`,
+        ),
         this.fetchJson<TranslationFile>(
           `${SOURCE_BASE_URL}/translation/en/en_translation_${surahNumber}.json`,
         ),
@@ -711,7 +721,9 @@ class Database {
         throw new Error(`Missing metadata for surah ${surahNumber}`);
       }
 
-      surahs.push(this.toSeedSurah(surahNumber, metadata, surahFile, translationFile));
+      surahs.push(
+        this.toSeedSurah(surahNumber, metadata, surahFile, translationFile),
+      );
     }
 
     return surahs;
@@ -736,7 +748,9 @@ class Database {
       const textTranslation = translationFile.verse[verseKey];
 
       if (!textArabic || !textTranslation) {
-        throw new Error(`Missing ayah ${ayahNumber} data for surah ${surahNumber}`);
+        throw new Error(
+          `Missing ayah ${ayahNumber} data for surah ${surahNumber}`,
+        );
       }
 
       ayahs.push({
@@ -802,13 +816,17 @@ class Database {
       }
     }
 
-    await this.client.execute('UPDATE ayahs SET ayah_id = id WHERE ayah_id IS NULL;');
+    await this.client.execute(
+      'UPDATE ayahs SET ayah_id = id WHERE ayah_id IS NULL;',
+    );
     await this.populateFtsTable();
   }
 
   private async populateFtsTable(): Promise<void> {
     try {
-      await this.client.execute("INSERT INTO ayahs_fts(ayahs_fts) VALUES ('rebuild');");
+      await this.client.execute(
+        "INSERT INTO ayahs_fts(ayahs_fts) VALUES ('rebuild');",
+      );
     } catch {
       console.debug('FTS rebuild skipped.');
     }
@@ -872,11 +890,17 @@ function parseIntParam(
   }
 
   if (min !== undefined && parsed < min) {
-    throw new HttpError(400, `${fieldName} must be greater than or equal to ${min}`);
+    throw new HttpError(
+      400,
+      `${fieldName} must be greater than or equal to ${min}`,
+    );
   }
 
   if (max !== undefined && parsed > max) {
-    throw new HttpError(400, `${fieldName} must be less than or equal to ${max}`);
+    throw new HttpError(
+      400,
+      `${fieldName} must be less than or equal to ${max}`,
+    );
   }
 
   return parsed;
@@ -917,7 +941,9 @@ async function loadInMemoryData(): Promise<InMemoryData> {
   const metadataResponse = await fetch(`${SOURCE_BASE_URL}/surah.json`);
 
   if (!metadataResponse.ok) {
-    throw new Error(`Failed to fetch surah metadata: ${metadataResponse.status}`);
+    throw new Error(
+      `Failed to fetch surah metadata: ${metadataResponse.status}`,
+    );
   }
 
   const metadataJson = (await metadataResponse.json()) as SurahMetadataResponse;
@@ -935,7 +961,9 @@ async function loadInMemoryData(): Promise<InMemoryData> {
 
     const [surahResponse, translationResponse] = await Promise.all([
       fetch(`${SOURCE_BASE_URL}/surah/surah_${surahNumber}.json`),
-      fetch(`${SOURCE_BASE_URL}/translation/en/en_translation_${surahNumber}.json`),
+      fetch(
+        `${SOURCE_BASE_URL}/translation/en/en_translation_${surahNumber}.json`,
+      ),
     ]);
 
     if (!surahResponse.ok || !translationResponse.ok) {
@@ -943,8 +971,11 @@ async function loadInMemoryData(): Promise<InMemoryData> {
     }
 
     const surahFile = (await surahResponse.json()) as SurahFile;
-    const translationFile = (await translationResponse.json()) as TranslationFile;
-    const metadata = metadataItems.find((item) => Number(item.index) === surahNumber);
+    const translationFile =
+      (await translationResponse.json()) as TranslationFile;
+    const metadata = metadataItems.find(
+      (item) => Number(item.index) === surahNumber,
+    );
 
     if (!metadata) {
       throw new Error(`Missing metadata for surah ${surahNumber}`);
@@ -968,7 +999,9 @@ async function loadInMemoryData(): Promise<InMemoryData> {
       const textTranslation = translationFile.verse[verseKey];
 
       if (!textArabic || !textTranslation) {
-        throw new Error(`Missing ayah ${ayahNumber} data for surah ${surahNumber}`);
+        throw new Error(
+          `Missing ayah ${ayahNumber} data for surah ${surahNumber}`,
+        );
       }
 
       const ayah: Ayah = {
@@ -1165,7 +1198,8 @@ async function searchAyahs(
   const offset = (page - 1) * limit;
   const items = filtered.slice(offset, offset + limit).map((row) => {
     const sourceText = lang === 'en' ? row.textTranslation : row.textArabic;
-    const sourceLower = lang === 'en' ? row.textTranslationLower : row.textArabicLower;
+    const sourceLower =
+      lang === 'en' ? row.textTranslationLower : row.textArabicLower;
     const matchStart = sourceLower.indexOf(needle);
     const snippet =
       matchStart >= 0
@@ -1198,7 +1232,9 @@ app.use('*', cors());
 
 app.use('*', async (c: Context, next: Next) => {
   const forwarded = c.req.header('x-forwarded-for');
-  const ip = forwarded ? forwarded.split(',')[0]?.trim() || 'unknown' : 'unknown';
+  const ip = forwarded
+    ? forwarded.split(',')[0]?.trim() || 'unknown'
+    : 'unknown';
   const now = Date.now();
   const entry = rateLimitStore.get(ip);
 
@@ -1448,14 +1484,16 @@ const bootstrap = async (): Promise<void> => {
     inMemoryData = await loadInMemoryData();
   }
 
-  const bunRuntime = (globalThis as typeof globalThis & {
-    Bun?: {
-      serve: (options: {
-        fetch: (request: Request) => Response | Promise<Response>;
-        port: number;
-      }) => void;
-    };
-  }).Bun;
+  const bunRuntime = (
+    globalThis as typeof globalThis & {
+      Bun?: {
+        serve: (options: {
+          fetch: (request: Request) => Response | Promise<Response>;
+          port: number;
+        }) => void;
+      };
+    }
+  ).Bun;
 
   if (bunRuntime) {
     bunRuntime.serve({ fetch: app.fetch, port });
