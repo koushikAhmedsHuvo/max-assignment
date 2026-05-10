@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { Loader2, Pause, Play } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -20,6 +20,7 @@ export function AudioPlayer({
   onPause,
   isDark = false,
 }: AudioPlayerProps) {
+  console.log("🎵 AudioPlayer rendered for ayah:", ayahNumber);
   const [isLoading, setIsLoading] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -30,51 +31,66 @@ export function AudioPlayer({
     if (activeAyahNumber === ayahNumber) {
       activeAyahNumber = null;
       window.dispatchEvent(
-        new CustomEvent(playerEventName, { detail: { ayahNumber: null } })
+        new CustomEvent(playerEventName, { detail: { ayahNumber: null } }),
       );
     }
     onPause?.();
   }, [ayahNumber, onPause]);
 
   const handleTogglePlay = async () => {
+    console.log("1️⃣ Button clicked, ayahNumber:", ayahNumber);
     try {
+      console.log("2️⃣ Setting loading state...");
       setIsLoading(true);
 
       if (currentAudio && currentAudio !== audioRef.current) {
+        console.log("3️⃣ Pausing previous audio");
         currentAudio.pause();
       }
 
       if (!audioRef.current) {
-        const audio = new Audio(getAyahAudioUrl(ayahNumber));
+        console.log("4️⃣ Creating new audio element, calling getAyahAudioUrl");
+        const url = getAyahAudioUrl(ayahNumber);
+        console.log("5️⃣ Generated URL:", url);
+        const audio = new Audio(url);
         audio.preload = "none";
         audio.addEventListener("ended", onAudioEnded);
         audioRef.current = audio;
+        console.log("6️⃣ Audio element created");
       }
       currentAudio = audioRef.current;
 
       if (isPlaying) {
+        console.log("7️⃣ Audio is playing, pausing...");
         audioRef.current.pause();
         setIsPlaying(false);
         if (activeAyahNumber === ayahNumber) {
           activeAyahNumber = null;
           window.dispatchEvent(
-            new CustomEvent(playerEventName, { detail: { ayahNumber: null } })
+            new CustomEvent(playerEventName, { detail: { ayahNumber: null } }),
           );
         }
         onPause?.();
       } else {
+        console.log("8️⃣ Audio paused, playing...");
         await audioRef.current.play();
+        console.log("9️⃣ Audio playing");
         setIsPlaying(true);
         activeAyahNumber = ayahNumber;
         window.dispatchEvent(
-          new CustomEvent(playerEventName, { detail: { ayahNumber } })
+          new CustomEvent(playerEventName, { detail: { ayahNumber } }),
         );
         onPlay?.(ayahNumber);
       }
     } catch (error) {
-      console.error("Error playing ayah audio:", error);
+      console.error("❌ Error playing ayah audio:", error);
+      console.error(
+        "Error details:",
+        error instanceof Error ? error.message : String(error),
+      );
       setIsPlaying(false);
     } finally {
+      console.log("🔟 Finally - setting loading to false");
       setIsLoading(false);
     }
   };
