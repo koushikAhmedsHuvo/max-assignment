@@ -1,0 +1,9 @@
+quran.sqlite
+quran.sqlite-shm
+quran.sqlite-wal
+node_modules
+.git
+.env
+.env.local
+dist
+test

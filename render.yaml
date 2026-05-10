@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: quran-api
+    runtime: node
+    rootDir: quran-api
+    region: oregon
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: node dist/src/main.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: TURSO_CONNECTION_URL
+        sync: false
+      - key: TURSO_AUTH_TOKEN
+        sync: false
